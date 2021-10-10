@@ -3,6 +3,7 @@ import Spinner from "../spinner";
 import './person-details.css';
 import SwapiService from "../../services/swapi-service";
 import ErrorIndicator from "../error-indicator";
+import ErrorButton from "../error-button";
 
 class PersonDetails extends Component {
 
@@ -86,6 +87,7 @@ const PersonView = ({person}) => {
                         <span>{eyeColor}</span>
                     </li>
                 </ul>
+                <ErrorButton/>
             </div>
         </>
     )
