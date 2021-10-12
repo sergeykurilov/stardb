@@ -3,5 +3,7 @@
 }
 
 .stardb-app {
+    margin: .5em auto 0;
+    max-width: 85%;
     overflow: hidden;
 }

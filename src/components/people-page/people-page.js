@@ -1,22 +1,29 @@
 import React, {Component} from 'react';
 import './people-page.css';
 import ItemList from "../item-list";
-import PersonDetails from "../person-details";
-import ErrorButton from "../error-button";
+import ItemDetails from "../item-details";
 import ErrorIndicator from "../error-indicator";
 import SwapiService from "../../services/swapi-service";
+import Row from "../row";
 
-const Row = ({left, right}) => {
-    return (
-        <div className="row mb2">
-            <div className="col-md-6">
-                {left}
-            </div>
-            <div className="col-md-6">
-                {right}
-            </div>
-        </div>
-    )
+class ErrorBoundry extends React.Component {
+
+    state = {
+        hasError: false
+    }
+
+    componentDidCatch(error, errorInfo) {
+        this.setState({
+            hasError: true
+        })
+    }
+
+    render() {
+        if (this.state.hasError) {
+            return <ErrorIndicator/>
+        }
+        return this.props.children
+    }
 }
 
 export default class PeoplePage extends Component {
@@ -26,12 +33,6 @@ export default class PeoplePage extends Component {
     state = {
         selectedPerson: 3,
         hasError: false,
-    }
-
-    componentDidCatch(error, errorInfo) {
-        this.setState({
-            hasError: true
-        })
     }
 
     onPersonSelected = (id) => {
@@ -48,12 +49,17 @@ export default class PeoplePage extends Component {
             <ItemList
                 getData={this.swapiService.getAllPeople}
                 onItemSelected={this.onPersonSelected}
-                renderItem={({name, gender, birthYear}) => `${name} (${gender}, ${birthYear})`}
-            />
+            >
+                {(i) => (
+                    `${i.name}  ${i.birthYear})`
+                )}
+            </ItemList>
         )
 
         const personDetails = (
-            <PersonDetails personId={this.state.selectedPerson}/>
+            <ErrorBoundry>
+                <ItemDetails personId={this.state.selectedPerson}/>
+            </ErrorBoundry>
         )
 
         return (

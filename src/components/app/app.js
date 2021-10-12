@@ -4,12 +4,11 @@ import Header from '../header';
 import RandomPlanet from '../random-planet';
 
 import './app.css';
-import ErrorButton from "../error-button";
 import ErrorIndicator from "../error-indicator";
-import PeoplePage from "../people-page";
-import ItemList from "../item-list";
-import PersonDetails from "../person-details";
+import ItemDetails from "../item-details";
 import SwapiService from "../../services/swapi-service";
+import Row from "../row";
+import {Record} from "../item-details/item-details";
 
 export default class App extends Component {
 
@@ -49,22 +48,35 @@ export default class App extends Component {
         const planet = this.state.showRandomPlanet ?
             <RandomPlanet/> :
             null;
+        const {
+            getPerson,
+            getStarship,
+            getPersonImage,
+            getStarshipImage,
+        } = this.swapiService;
+
+        const personDetails = (
+            <ItemDetails
+                getData={getPerson}
+                itemId={11}
+                getImageUrl={getPersonImage}
+            >
+                <Record field='gender' label='Gender'/>
+                <Record field='eyeColor' label='Eye Color'/>
+            </ItemDetails>
+        );
+        const starshipDetails = (
+            <ItemDetails
+                itemId={5}
+                getData={getStarship}
+                getImageUrl={getStarshipImage}
+            />
+        )
 
         return (
             <div className="stardb-app">
                 <Header/>
-                {planet}
-
-
-                <div className="row button-row buttons-row">
-                    <button
-                        className="toggle-planet btn btn-warning btn-lg ml-4"
-                        onClick={this.toggleRandomPlanet}>
-                        Toggle Random Planet
-                    </button>
-                    <ErrorButton/>
-                </div>
-                <PeoplePage/>
+                <Row left={personDetails} right={starshipDetails}/>
             </div>
         );
     }

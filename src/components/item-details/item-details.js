@@ -1,17 +1,29 @@
 import React, {Component} from 'react';
 import Spinner from "../spinner";
-import './person-details.css';
+import './item-details.css';
 import SwapiService from "../../services/swapi-service";
 import ErrorIndicator from "../error-indicator";
 import ErrorButton from "../error-button";
 
-class PersonDetails extends Component {
+
+export const Record = ({field, label}) => {
+    return (
+        <li className="list-group-item">
+            <span className="term">{label}</span>
+            <span>{field}</span>
+            <span>{label}</span>
+        </li>
+    )
+}
+
+class ItemDetails extends Component {
 
     swapiService = new SwapiService()
 
     state = {
-        person: null,
+        item: null,
         loading: true,
+        image: null,
     }
 
     componentDidMount() {
@@ -19,7 +31,7 @@ class PersonDetails extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (this.props.personId !== prevProps.personId) {
+        if (this.props.itemId !== prevProps.itemId) {
             this.updatePerson()
         }
     }
@@ -32,24 +44,28 @@ class PersonDetails extends Component {
     }
 
     updatePerson() {
-        const {personId} = this.props
-        if (!personId) {
+        const {itemId, getData, getImageUrl} = this.props
+        if (!itemId) {
             return;
         }
-        this.swapiService
-            .getPerson(personId)
-            .then((person) => {
-                this.setState({person, loading: false, error: false})
+        getData(itemId)
+            .then((item) => {
+                this.setState({
+                    item,
+                    loading: false,
+                    error: false,
+                    image: getImageUrl(item)
+                })
             })
             .catch(this.onError)
     }
 
     render() {
-        const {person, loading, error} = this.state;
+        const {item, image, loading, error} = this.state;
         const hasData = !(loading || error)
         const errorMessage = error ? <ErrorIndicator/> : null;
         const spinner = loading ? <Spinner/> : null;
-        const content = hasData ? <PersonView person={person}/> : null;
+        const content = hasData ? <ItemView children={this.props.children} image={image} item={item}/> : null;
         return (
             <div className="person-details card">
                 {errorMessage}
@@ -60,32 +76,26 @@ class PersonDetails extends Component {
     }
 }
 
-const PersonView = ({person}) => {
+const ItemView = ({item, image, children}) => {
+    if (!item) {
+        return <span>Select a item from a list</span>
+    }
     const {
         id, name, gender,
         birthYear, eyeColor
-    } = person;
+    } = item;
     return (
         <>
             <img className="person-image"
-                 src={`https://starwars-visualguide.com/assets/img/characters/${id}.jpg`}
+                 src={image}
                  alt="character"/>
 
             <div className="card-body">
                 <h4>{name}</h4>
                 <ul className="list-group list-group-flush">
-                    <li className="list-group-item">
-                        <span className="term">Gender</span>
-                        <span>{gender}</span>
-                    </li>
-                    <li className="list-group-item">
-                        <span className="term">Birth Year</span>
-                        <span>{birthYear}</span>
-                    </li>
-                    <li className="list-group-item">
-                        <span className="term">Eye Color</span>
-                        <span>{eyeColor}</span>
-                    </li>
+                    {React.Children.map(children, (child, idx) => {
+                        return React.cloneElement(child, {})
+                    })}
                 </ul>
                 <ErrorButton/>
             </div>
@@ -93,4 +103,4 @@ const PersonView = ({person}) => {
     )
 }
 
-export default PersonDetails
+export default ItemDetails
