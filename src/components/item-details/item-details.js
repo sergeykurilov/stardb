@@ -6,12 +6,11 @@ import ErrorIndicator from "../error-indicator";
 import ErrorButton from "../error-button";
 
 
-export const Record = ({field, label}) => {
+export const Record = ({item, field, label}) => {
     return (
         <li className="list-group-item">
             <span className="term">{label}</span>
-            <span>{field}</span>
-            <span>{label}</span>
+            <span>{item[field]}</span>
         </li>
     )
 }
@@ -31,7 +30,9 @@ class ItemDetails extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (this.props.itemId !== prevProps.itemId) {
+        if (this.props.itemId !== prevProps.itemId ||
+            this.props.getData !== prevProps.getData ||
+            this.props.getImageUrl !== prevProps.getImageUrl) {
             this.updatePerson()
         }
     }
@@ -48,6 +49,7 @@ class ItemDetails extends Component {
         if (!itemId) {
             return;
         }
+
         getData(itemId)
             .then((item) => {
                 this.setState({
@@ -62,6 +64,9 @@ class ItemDetails extends Component {
 
     render() {
         const {item, image, loading, error} = this.state;
+        if (!item) {
+            return <span>Select a item from a list</span>
+        }
         const hasData = !(loading || error)
         const errorMessage = error ? <ErrorIndicator/> : null;
         const spinner = loading ? <Spinner/> : null;
@@ -77,12 +82,8 @@ class ItemDetails extends Component {
 }
 
 const ItemView = ({item, image, children}) => {
-    if (!item) {
-        return <span>Select a item from a list</span>
-    }
     const {
-        id, name, gender,
-        birthYear, eyeColor
+        name
     } = item;
     return (
         <>
@@ -94,7 +95,7 @@ const ItemView = ({item, image, children}) => {
                 <h4>{name}</h4>
                 <ul className="list-group list-group-flush">
                     {React.Children.map(children, (child, idx) => {
-                        return React.cloneElement(child, {})
+                        return React.cloneElement(child, {item})
                     })}
                 </ul>
                 <ErrorButton/>
