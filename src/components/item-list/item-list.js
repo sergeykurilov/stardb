@@ -18,12 +18,17 @@ const ItemList = (props) => {
         })
     }
     const items = renderItems(data)
-    
+
     return (
         <ul className='item-list list-group'>
             {items}
         </ul>
     );
+}
+
+ItemList.defaultProps = {
+    onItemSelected: () => {
+    }
 }
 
 export default ItemList;

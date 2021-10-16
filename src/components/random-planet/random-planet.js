@@ -6,6 +6,20 @@ import ErrorIndicator from "../error-indicator";
 
 class RandomPlanet extends Component {
 
+    static defaultProps = {
+        updateInterval: 10000
+    }
+
+    static propTypes = {
+        updateInterval: (props, propName, componentName) => {
+            const value = props[propName];
+            if (typeof value === "number" && !isNaN(value)) {
+                return null;
+            }
+            return new TypeError(`${componentName}: ${propName} must be a number`)
+        }
+    }
+
     swapiService = new SwapiService();
 
     state = {
@@ -15,7 +29,9 @@ class RandomPlanet extends Component {
     }
 
     componentDidMount() {
-        this.interval = setInterval(this.updatePlanet, 5000)
+        const {updateInterval} = this.props;
+        this.updatePlanet()
+        this.interval = setInterval(this.updatePlanet, updateInterval)
     }
 
     componentWillUnmount() {
@@ -57,12 +73,13 @@ class RandomPlanet extends Component {
     }
 }
 
+
 const PlanetView = ({planet}) => {
     const {population, rotationPeriod, diameter, name, id} = planet;
     return (
         <>
             <img className="planet-image"
-                 src={`https://starwars-visualguide.com/assets/img/planets/${id}.jpg`} alt='planet-image'/>
+                 src={`https://starwars-visualguide.com/assets/img/planets/${id}.jpg`} alt="planet"/>
             <div>
                 <h4>{name}</h4>
                 <ul className="list-group list-group-flush">
