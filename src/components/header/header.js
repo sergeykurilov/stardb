@@ -1,6 +1,7 @@
 import React from 'react';
 
 import './header.css';
+import {Link} from "react-router-dom";
 
 const Header = ({onServiceChange}) => {
     return (
@@ -12,16 +13,19 @@ const Header = ({onServiceChange}) => {
             </h3>
             <ul className="d-flex">
                 <li>
-                    {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                    <a href="http://localhost:3000/">People</a>
+                    <Link to="/people/">People</Link>
                 </li>
                 <li>
-                    {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                    <a href="http://localhost:3000/">Planets</a>
+                    <Link to="/planets/">Planets</Link>
                 </li>
                 <li>
-                    {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                    <a href="http://localhost:3000/">Starships</a>
+                    <Link to="/starships/">Starships</Link>
+                </li>
+                <li>
+                    <Link to="/login">Login</Link>
+                </li>
+                <li>
+                    <Link to="/secret">Secret</Link>
                 </li>
             </ul>
 
